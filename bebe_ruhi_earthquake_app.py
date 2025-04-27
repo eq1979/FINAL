@@ -58,14 +58,16 @@ df = fetch_earthquake_data()
 if not df.empty:
     # 🔥 ZAMAN TİPLERİ DÜZENLENİYOR
     df['time'] = pd.to_datetime(df['time'], errors='coerce')
-    df = df.dropna(subset=['time'])  # NaT olan kayıtlar temizleniyor
-    start_date = pd.to_datetime(start_date)  # BURADA doğru dönüştürme
+    df = df.dropna(subset=['time'])
+    start_date = pd.to_datetime(start_date)
     end_date = pd.to_datetime(end_date)
 
-    # 🔥 FİLTRELEME
-    df_filtered = df[(df['time'] >= start_date) &
-                     (df['time'] <= end_date) &
-                     (df['mag'] >= min_magnitude)]
+    # 🔥 FİLTRELEME (floor ile!)
+    df_filtered = df[
+        (df['time'].dt.floor('D') >= start_date.floor('D')) &
+        (df['time'].dt.floor('D') <= end_date.floor('D')) &
+        (df['mag'] >= min_magnitude)
+    ]
 
     st.subheader("Son Deprem Verileri")
     st.dataframe(df_filtered[['time', 'place', 'mag']])
