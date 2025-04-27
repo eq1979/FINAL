@@ -57,10 +57,14 @@ st.header("🌍 Deprem Verileri ve Korelasyon Analizi")
 df = fetch_earthquake_data()
 
 if not df.empty:
+    # Zaman tiplerini dönüştürme (BÜYÜK DÜZELTME BURADA!)
+    df['time'] = pd.to_datetime(df['time'], errors='coerce')
+    start_date = pd.to_datetime(start_date)
+    end_date = pd.to_datetime(end_date)
+
     # Tarih ve magnitüd filtresi
-    df['time'] = pd.to_datetime(df['time'])
-    df_filtered = df[(df['time'] >= pd.to_datetime(start_date)) & 
-                     (df['time'] <= pd.to_datetime(end_date)) &
+    df_filtered = df[(df['time'] >= start_date) & 
+                     (df['time'] <= end_date) &
                      (df['mag'] >= min_magnitude)]
 
     st.subheader("Son Deprem Verileri")
