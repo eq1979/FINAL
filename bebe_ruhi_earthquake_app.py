@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import numpy as np
 import matplotlib.pyplot as plt
 import folium
 from streamlit_folium import st_folium
@@ -58,8 +59,8 @@ if not df.empty:
     # Zaman tiplerini düzenle
     df['time'] = pd.to_datetime(df['time'], errors='coerce')
     df = df.dropna(subset=['time'])  # NaT kayıtları temizle
-    start_date = pd.to_datetime(str(start_date))
-    end_date = pd.to_datetime(str(end_date))
+    start_date = pd.to_datetime(np.datetime64(start_date))
+    end_date = pd.to_datetime(np.datetime64(end_date))
 
     # Filtreleme
     df_filtered = df[(df['time'] >= start_date) &
