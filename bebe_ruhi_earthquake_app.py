@@ -1,10 +1,8 @@
 import streamlit as st
 import pandas as pd
-import requests
 import matplotlib.pyplot as plt
 import folium
 from streamlit_folium import st_folium
-import urllib.error
 from datetime import datetime
 from io import BytesIO
 
@@ -12,9 +10,9 @@ from io import BytesIO
 st.markdown("<h1 style='text-align: center;'>🎉 Welcome to BEBE RUHI 🌎</h1>", unsafe_allow_html=True)
 st.markdown("<h3 style='text-align: center;'>Global Earthquake Correlation & Prediction System</h3>", unsafe_allow_html=True)
 
+# Sidebar Ayarları
 st.sidebar.title("Filtre Ayarları")
 
-# Sidebar ayarları
 min_magnitude = st.sidebar.slider("Minimum Magnitude", 4.0, 10.0, 4.0)
 start_date = st.sidebar.date_input("Başlangıç Tarihi", datetime(2023, 1, 1))
 end_date = st.sidebar.date_input("Bitiş Tarihi", datetime.now())
@@ -51,18 +49,19 @@ def calculate_correlation(df, region1_keywords, region2_keywords):
     correlation = corr_df.corr().iloc[0, 1]
     return correlation
 
-# Uygulama Ana İşleyişi
+# Ana Uygulama İşleyişi
 st.header("🌍 Deprem Verileri ve Korelasyon Analizi")
 
 df = fetch_earthquake_data()
 
 if not df.empty:
-    # 🔥 Kritik düzeltme: zaman tipleri eşitleniyor!
+    # Zaman tiplerini düzenle
     df['time'] = pd.to_datetime(df['time'], errors='coerce')
+    df = df.dropna(subset=['time'])  # NaT kayıtları temizle
     start_date = pd.to_datetime(str(start_date))
     end_date = pd.to_datetime(str(end_date))
 
-    # Tarih ve magnitüd filtresi
+    # Filtreleme
     df_filtered = df[(df['time'] >= start_date) &
                      (df['time'] <= end_date) &
                      (df['mag'] >= min_magnitude)]
@@ -70,7 +69,7 @@ if not df.empty:
     st.subheader("Son Deprem Verileri")
     st.dataframe(df_filtered[['time', 'place', 'mag']])
 
-    # Deprem Magnitude Dağılım Grafiği
+    # Magnitude Histogram
     st.subheader("Magnitude Dağılımı")
     fig, ax = plt.subplots()
     df_filtered['mag'].hist(bins=30, ax=ax)
@@ -78,7 +77,7 @@ if not df.empty:
     plt.ylabel('Frequency')
     st.pyplot(fig)
 
-    # Harita Üzerinde Depremler
+    # Dünya Haritası
     st.subheader("Depremlerin Dünya Haritası Üzerinde Gösterimi 🌎")
     m = folium.Map(location=[20, 0], zoom_start=2)
     for idx, row in df_filtered.iterrows():
@@ -107,7 +106,7 @@ if not df.empty:
     else:
         st.error("Korelasyon hesaplanamadı. Yeterli veri bulunamadı.")
 
-    # Veri İndirme Butonu
+    # CSV İndirme Butonu
     st.subheader("📥 Verileri İndir")
     towrite = BytesIO()
     df_filtered.to_csv(towrite, index=False)
