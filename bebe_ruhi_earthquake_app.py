@@ -120,3 +120,4 @@ if not df.empty:
     )
 else:
     st.error("Veri çekilemedi. Lütfen daha sonra tekrar deneyin.")
+
