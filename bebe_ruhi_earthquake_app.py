@@ -57,10 +57,10 @@ st.header("🌍 Deprem Verileri ve Korelasyon Analizi")
 df = fetch_earthquake_data()
 
 if not df.empty:
-    # 🔥 Kritik düzeltme: tipleri doğru çevir!
+    # 🔥 Kritik düzeltme: zaman tipleri eşitleniyor!
     df['time'] = pd.to_datetime(df['time'], errors='coerce')
-    start_date = pd.to_datetime(start_date)
-    end_date = pd.to_datetime(end_date)
+    start_date = pd.to_datetime(str(start_date))
+    end_date = pd.to_datetime(str(end_date))
 
     # Tarih ve magnitüd filtresi
     df_filtered = df[(df['time'] >= start_date) &
