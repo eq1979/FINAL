@@ -56,13 +56,13 @@ st.header("🌍 Deprem Verileri ve Korelasyon Analizi")
 df = fetch_earthquake_data()
 
 if not df.empty:
-    # Zaman tiplerini düzenle
+    # 🔥 ZAMAN TİPLERİ DÜZENLENİYOR
     df['time'] = pd.to_datetime(df['time'], errors='coerce')
-    df = df.dropna(subset=['time'])  # NaT kayıtları temizle
-    start_date = pd.to_datetime(np.datetime64(start_date))
-    end_date = pd.to_datetime(np.datetime64(end_date))
+    df = df.dropna(subset=['time'])  # NaT olan kayıtlar temizleniyor
+    start_date = pd.to_datetime(start_date)  # BURADA doğru dönüştürme
+    end_date = pd.to_datetime(end_date)
 
-    # Filtreleme
+    # 🔥 FİLTRELEME
     df_filtered = df[(df['time'] >= start_date) &
                      (df['time'] <= end_date) &
                      (df['mag'] >= min_magnitude)]
@@ -70,7 +70,7 @@ if not df.empty:
     st.subheader("Son Deprem Verileri")
     st.dataframe(df_filtered[['time', 'place', 'mag']])
 
-    # Magnitude Histogram
+    # 🔥 MAGNITUDE HISTOGRAM
     st.subheader("Magnitude Dağılımı")
     fig, ax = plt.subplots()
     df_filtered['mag'].hist(bins=30, ax=ax)
@@ -78,7 +78,7 @@ if not df.empty:
     plt.ylabel('Frequency')
     st.pyplot(fig)
 
-    # Dünya Haritası
+    # 🔥 DÜNYA HARİTASI
     st.subheader("Depremlerin Dünya Haritası Üzerinde Gösterimi 🌎")
     m = folium.Map(location=[20, 0], zoom_start=2)
     for idx, row in df_filtered.iterrows():
@@ -90,7 +90,7 @@ if not df.empty:
         ).add_to(m)
     st_folium(m, width=700)
 
-    # Korelasyon Analizi
+    # 🔥 KORELASYON ANALİZİ
     st.subheader("📊 Korelasyon Analizi")
     region1_keywords = [x.strip() for x in region1.split(',')]
     region2_keywords = [x.strip() for x in region2.split(',')]
@@ -107,7 +107,7 @@ if not df.empty:
     else:
         st.error("Korelasyon hesaplanamadı. Yeterli veri bulunamadı.")
 
-    # CSV İndirme Butonu
+    # 🔥 CSV İNDİRME
     st.subheader("📥 Verileri İndir")
     towrite = BytesIO()
     df_filtered.to_csv(towrite, index=False)
